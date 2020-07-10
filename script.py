@@ -1,5 +1,4 @@
 import RPi.GPIO as GPIO
-import keyboard
 
 a = 25
 b = 24
@@ -38,25 +37,22 @@ def rightSpin(): setNumber(3)
 def leftSpin(): setNumber(4)
 
 while True:
-    try:
-        if keyboard.is_pressed('a'): 
-            print('stop')
-            stop()
-        if keyboard.is_pressed('z'): 
-            print('forward')
-            forward()
-        if keyboard.is_pressed('s'): 
-            print('backward')
-            backward()
-        if keyboard.is_pressed('d'): 
-            print('rspin')
-            rightSpin()
-        if keyboard.is_pressed('q'): 
-            print('lspin')
-            leftSpin()
-        if keyboard.is_pressed('e'): 
-            print('end')
-            break
-    except:
+    inkey = input()
+    if inkey == 'a': 
+        print('stop')
+        stop()
+    if inkey == 'z': 
+        print('forward')
+        forward()
+    if inkey == 's':
+        print('backward')
+        backward()
+    if inkey == 'd': 
+        print('rspin')
+        rightSpin()
+    if inkey == 'q': 
+        print('lspin')
+        leftSpin()
+    if inkey == 'e': 
         print('end')
         break
