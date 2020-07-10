@@ -6,7 +6,7 @@ b = 24
 c = 23
 d = 22
 
-GPIO.setmode(GPIO.BOARD)
+GPIO.setmode(GPIO.BCM)
 GPIO.setup(a, GPIO.OUT)
 GPIO.setup(b, GPIO.OUT)
 GPIO.setup(c, GPIO.OUT)
@@ -39,11 +39,24 @@ def leftSpin(): setNumber(4)
 
 while True:
     try:
-        if keyboard.is_pressed('a'): stop()
-        if keyboard.is_pressed('z'): forward()
-        if keyboard.is_pressed('s'): backward()
-        if keyboard.is_pressed('d'): rightSpin()
-        if keyboard.is_pressed('q'): leftSpin()
-        if keyboard.is_pressed('e'): break
+        if keyboard.is_pressed('a'): 
+            print('stop')
+            stop()
+        if keyboard.is_pressed('z'): 
+            print('forward')
+            forward()
+        if keyboard.is_pressed('s'): 
+            print('backward')
+            backward()
+        if keyboard.is_pressed('d'): 
+            print('rspin')
+            rightSpin()
+        if keyboard.is_pressed('q'): 
+            print('lspin')
+            leftSpin()
+        if keyboard.is_pressed('e'): 
+            print('end')
+            break
     except:
+        print('end')
         break
