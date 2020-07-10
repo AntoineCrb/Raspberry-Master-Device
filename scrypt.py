@@ -5,6 +5,7 @@ b = 24
 c = 23
 d = 22
 
+GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(a, GPIO.OUT)
 GPIO.setup(b, GPIO.OUT)
@@ -12,17 +13,17 @@ GPIO.setup(c, GPIO.OUT)
 GPIO.setup(d, GPIO.OUT)
 
 def setNumber(n):
-    if (n%8==1):
+    if (n//8==1):
         n-=8
         GPIO.output(d, GPIO.HIGH)
     else: GPIO.output(d, GPIO.LOW)
 
-    if (n%4==1):
+    if (n//4==1):
         n-=4
         GPIO.output(c, GPIO.HIGH)
     else: GPIO.output(c, GPIO.LOW)
 
-    if (n%2==1):
+    if (n//2==1):
         n-=2
         GPIO.output(b, GPIO.HIGH)
     else: GPIO.output(b, GPIO.LOW)
@@ -56,3 +57,5 @@ while True:
     if inkey == 'e': 
         print('end')
         break
+
+GPIO.cleanup()
