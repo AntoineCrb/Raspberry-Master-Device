@@ -1,9 +1,9 @@
 import RPi.GPIO as GPIO
 
-a = 25
-b = 24
-c = 23
-d = 22
+a = 26
+b = 19
+c = 13
+d = 6
 
 GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BCM)
@@ -38,7 +38,7 @@ def rightSpin(): setNumber(3)
 def leftSpin(): setNumber(4)
 
 while True:
-    inkey = input()
+    inkey = input("move ?")
     if inkey == 'a': 
         print('stop')
         stop()
