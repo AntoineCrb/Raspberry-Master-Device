@@ -9,7 +9,6 @@ class Control:
     current=0
     
     def __init__(self):
-        GPIO.cleanup()
         GPIO.setwarnings(False)
         GPIO.setmode(GPIO.BCM)
 
