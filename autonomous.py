@@ -7,7 +7,7 @@ from communication.control import Control
 import algo
 
 control = Control()
-vs = VideoStream(usePiCamera=True, resolution=(1280, 720), framerate=32, rotation=180)
+vs = VideoStream(usePiCamera=True, resolution=(640, 480), framerate=32, rotation=180)
 fps = FPS()
 
 def init():
@@ -21,15 +21,23 @@ def loop():
         frame = vs.read()
         canny = algo.canny(frame)
 
-        cv2.imshow("Frame", frame)
+        cropped_canny = algo.region_of_interest(canny)
+        lines = cv2.HoughLinesP(cropped_canny, 2, np.pi/180, 100, np.array([]), minLineLength=40, maxLineGap=5)
+        averaged_lines = algo.average_slope_intercept(frame, lines)
+        line_image = algo.display_lines(frame, averaged_lines)
+        combo_image = cv2.addWeighted(frame, 0.8, line_image, 1, 1)
+
+        cv2.imshow("result", combo_image)
         cv2.imshow("Canny", canny)
+
+
 
         key = cv2.waitKey(1) & 0xFF
         if key == ord('z'): control.forward()
         elif key == ord('s'): control.backward()
         elif key == ord('d'): control.right_spin()
         elif key == ord('q'): control.left_spin()
-        elif key == ord("q"): break
+        elif key == ord('e'): break
         else: control.stop()
         fps.update()
     
