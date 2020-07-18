@@ -19,26 +19,24 @@ def init():
 def loop():
     while True:
         frame = vs.read()
+        canny = algo.canny(frame)
+
         cv2.imshow("Frame", frame)
+        cv2.imshow("Canny", canny)
+
         key = cv2.waitKey(1) & 0xFF
-        if key == ord("q"): 
-            break
+        if key == ord('z'): control.forward()
+        elif key == ord('s'): control.backward()
+        elif key == ord('d'): control.right_spin()
+        elif key == ord('q'): control.left_spin()
+        elif key == ord("q"): break
+        else: control.stop()
         fps.update()
+    
     fps.stop()
     print("[INFO] elapsed time: {:.2f}".format(fps.elapsed()))
     print("[INFO] approx. FPS: {:.2f}".format(fps.fps()))
     cv2.destroyAllWindows()
     vs.stop()
-
-    """for frame in camera.get_camera().capture_continuous(camera.get_raw_camera(), format="bgr", use_video_port=True):
-        image = np.copy(frame.array)
-        canny = algo.canny(image)
-        cv2.imshow(canny)
-        camera.get_raw_camera().truncate(0)
-        
-        #threading.Timer(1/fps, loop).start()
-    cv2.destroyAllWindows()"""
-
-
 
 init()
