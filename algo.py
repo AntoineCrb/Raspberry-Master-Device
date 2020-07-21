@@ -74,6 +74,6 @@ def get_average_slopes(lines):
     avg=0
     for line in lines:
         for x1, y1, x2, y2 in line:
-            a = math.atan((y2-y1)/(x2-x1))
+            a = math.atan((y2-y1)/(x2-x1))/(2*math.pi*len(lines))
             avg += a - (a/abs(a))*0.15
-    return avg/(2*math.pi*len(lines))
+    return avg
