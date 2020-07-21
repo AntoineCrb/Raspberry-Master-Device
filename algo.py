@@ -1,6 +1,6 @@
 import cv2
 import numpy as np
-
+import math
 # get lines
 
 
@@ -67,3 +67,11 @@ def region_of_interest(canny):
     cv2.fillPoly(mask, polygon, 255)
     masked_image = cv2.bitwise_and(canny, mask)
     return masked_image
+
+def get_average_slopes(lines):
+    avg=0
+    if lines is not None:
+        for line in lines:
+            for x1, y1, x2, y2 in line:
+                avg += math.atan((y2-y1)/(x2-x1))
+    return avg/len(lines)
