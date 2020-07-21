@@ -23,15 +23,7 @@ def loop():
 
         cropped_canny = algo.region_of_interest(canny)
         lines = cv2.HoughLinesP(cropped_canny, 2, np.pi/180, 100, np.array([]), minLineLength=40, maxLineGap=5)
-        try:
-            averaged_lines = algo.average_slope_intercept(frame, lines)
-            line_image = algo.display_lines(frame, averaged_lines)
-            combo_image = cv2.addWeighted(frame, 0.8, line_image, 1, 1)
-
-            cv2.imshow("result", combo_image)
-        except:
-            cv2.imshow("result", frame)
-            
+        cv2.imshow("result", frame)    
         cv2.imshow("Canny", canny)
 
 
