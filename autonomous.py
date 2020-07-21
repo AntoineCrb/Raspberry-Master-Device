@@ -31,7 +31,8 @@ def loop():
 
         x = algo.get_average_slopes(averaged_lines)
 
-        if x < -0.12: control.right_spin()
+        if x is None: control.stop()
+        elif -0.15 < x < -0.12: control.right_spin()
         elif x < -0.08: control.right2()
         elif x < -0.05: control.right1()
         elif x < 0.05: control.forward()
@@ -43,10 +44,11 @@ def loop():
             control.stop()
 
         cv2.imshow("Result", combo_image)
-        cv2.imshow("Frame", framex)
+        cv2.imshow("Frame", frame)
 
         key = cv2.waitKey(1) & 0xFF
         if key == ord("q"): 
+            control.stop()
             break
         fps.update()
     

@@ -69,9 +69,10 @@ def region_of_interest(canny):
     return masked_image
 
 def get_average_slopes(lines):
+    if lines is None:
+        return None
     avg=0
-    if lines is not None:
-        for line in lines:
-            for x1, y1, x2, y2 in line:
-                avg += math.atan((y2-y1)/(x2-x1))
+    for line in lines:
+        for x1, y1, x2, y2 in line:
+            avg += math.atan((y2-y1)/(x2-x1))
     return avg/(2*math.pi*len(lines))
