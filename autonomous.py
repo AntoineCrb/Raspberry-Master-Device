@@ -27,23 +27,23 @@ def loop():
         averaged_lines = algo.average_slope_intercept(cropped_canny, lines)
 
         line_image = algo.display_lines(cropped_canny, averaged_lines)
-        combo_image = cv2.addWeighted(frame, 0.8, line_image, 1, 1)
+        combo_image = cv2.addWeighted(cropped_canny, 0.8, line_image, 1, 1)
 
         x = algo.get_average_slopes(averaged_lines)
 
-        if x < -0.8: control.right_spin()
-        elif x < -0.5: control.right2()
-        elif x < -0.3: control.right1()
-        elif x < 0.3: control.forward()
-        elif x < 0.5: control.left1()
-        elif x < 0.8: control.left2()
-        elif x <= 1: control.left_spin()
+        if x < -0.12: control.right_spin()
+        elif x < -0.08: control.right2()
+        elif x < -0.05: control.right1()
+        elif x < 0.05: control.forward()
+        elif x < 0.08: control.left1()
+        elif x < 0.12: control.left2()
+        elif x < 0.15: control.left_spin()
         else: 
             print('error, x value : ' + str(x))
             control.stop()
 
         cv2.imshow("Result", combo_image)
-        cv2.imshow("Canny", canny)
+        cv2.imshow("Frame", framex)
 
         key = cv2.waitKey(1) & 0xFF
         if key == ord("q"): 

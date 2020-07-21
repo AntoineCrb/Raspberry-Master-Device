@@ -1,8 +1,9 @@
 import cv2
 import numpy as np
 import algo
+import math
 
-frame = cv2.imread('assets/3.jpg')
+frame = cv2.imread('assets/testt.jpg')
 frame = cv2.resize(frame, (640, 480))
 frame_canny = algo.canny(frame)
 cropped_canny = algo.region_of_interest(frame_canny)
