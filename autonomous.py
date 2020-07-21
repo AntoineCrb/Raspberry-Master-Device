@@ -36,16 +36,14 @@ def loop():
         x = algo.get_average_slopes(averaged_lines)
 
         if x is None: control.stop()
-        elif -0.25 < x < -0.20: control.right_spin()
-        elif x < -0.15: control.right2()
-        elif x < -0.08: control.right1()
-        elif x < 0.08: control.forward()
-        elif x < 0.15: control.left1()
-        elif x < 0.20: control.left2()
-        elif x < 0.25: control.left_spin()
-        else: 
-            print('error, x value : ' + str(x))
-            control.stop()
+        elif -0.15 < x < -0.08: control.left2()
+        elif x < -0.05: control.left1()
+        elif x < 0.05: control.forward()
+        elif x < 0.08: control.right1()
+        elif x < 0.15: control.right2()
+        else: control.stop()
+        
+        if x is not None: print(x)
 
         cv2.imshow("Result", combo_image)
         cv2.imshow("Frame", frame)
