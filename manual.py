@@ -16,9 +16,6 @@ def on_press(key):
     elif key.char == 'q': 
         print('leftSpin')
         control.left_spin()
-    elif key.char == 'a':
-        print('forwardFast')
-        control.forward_fast()
 
 def on_release(key):
     control.stop()
