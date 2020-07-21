@@ -16,7 +16,19 @@ def on_press(key):
     elif key.char == 'q': 
         print('leftSpin')
         control.left_spin()
-
+    elif key.char == 'w': 
+        print('leftSpin')
+        control.left1()
+    elif key.char == 'x': 
+        print('leftSpin')
+        control.left2()
+    elif key.char == 'c': 
+        print('leftSpin')
+        control.right1()
+    elif key.char == 'v': 
+        print('leftSpin')
+        control.right2()
+        
 def on_release(key):
     control.stop()
 
