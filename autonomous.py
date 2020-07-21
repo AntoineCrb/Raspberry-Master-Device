@@ -23,18 +23,31 @@ def loop():
 
         cropped_canny = algo.region_of_interest(canny)
         lines = cv2.HoughLinesP(cropped_canny, 2, np.pi/180, 100, np.array([]), minLineLength=40, maxLineGap=5)
-        cv2.imshow("result", frame)    
+
+        averaged_lines = algo.average_slope_intercept(cropped_canny, lines)
+
+        line_image = algo.display_lines(cropped_canny, averaged_lines)
+        combo_image = cv2.addWeighted(frame, 0.8, line_image, 1, 1)
+
+        x = algo.get_average_slopes(averaged_lines)
+
+        if x < -0.8: control.right_spin()
+        elif x < -0.5: control.right2()
+        elif x < -0.3: control.right1()
+        elif x < 0.3: control.forward()
+        elif x < 0.5: control.left1()
+        elif x < 0.8: control.left2()
+        elif x <= 1: control.left_spin()
+        else: 
+            print('error, x value : ' + str(x))
+            control.stop()
+
+        cv2.imshow("Result", combo_image)
         cv2.imshow("Canny", canny)
 
-
-
         key = cv2.waitKey(1) & 0xFF
-        if key == ord('z'): control.forward()
-        elif key == ord('s'): control.backward()
-        elif key == ord('d'): control.right_spin()
-        elif key == ord('q'): control.left_spin()
-        elif key == ord('e'): break
-        else: control.stop()
+        if key == ord("q"): 
+            break
         fps.update()
     
     fps.stop()
