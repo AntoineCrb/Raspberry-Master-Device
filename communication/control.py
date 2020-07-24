@@ -19,6 +19,7 @@ class Control:
         GPIO.setup(d, GPIO.OUT)
 
     def get_current_state(self): return self.current
+    
     def set_number(self, n): # convert decimal number to binary information with pins
         self.current=n
         if (n//8==1):
@@ -49,6 +50,10 @@ class Control:
 
     def right1(self): self.set_number(5)
     def right2(self): self.set_number(6)
+    def right3(self): self.set_number(7)
+    def right4(self): self.set_number(8)
 
-    def left1(self): self.set_number(7)
-    def left2(self): self.set_number(8)
+    def left1(self): self.set_number(9)
+    def left2(self): self.set_number(10)
+    def left3(self): self.set_number(11)
+    def left4(self): self.set_number(12)
