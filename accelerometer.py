@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from datetime import datetime
 from mpu6050 import mpu6050
+from pynput import keyboard
 import time
 
 plt.style.use('ggplot')
@@ -25,6 +26,7 @@ mpu = mpu6050(0x68)
 coord = ['x', 'y', 'z']
 offs = [0, 0, 0]
 speed = [0, 0, 0]
+is_running = True
 
 def init():
     print("--- initialisation")
@@ -66,7 +68,7 @@ def run():
     y_vec = np.zeros(len(x_vec))
     line1 = []
     init()
-    while True:
+    while is_running:
         data = get_accel(3, 0.005)
         set_speed(data,0.03)
         s = ""
@@ -77,5 +79,15 @@ def run():
         y_vec[-1] = "%.1f" % data['z']
         line1 = live_plotter(x_vec,y_vec,line1, 0.015, identifier="Z accel")
         y_vec = np.append(y_vec[1:],0.0)
+    save_file.close()
+
+def on_press(key):
+    global is_running
+    if key.char == 'n': 
+        is_running = False
+
+with keyboard.Listener(
+        on_press=on_press) as listener:
+    listener.join()
 
 run()
