@@ -61,6 +61,7 @@ def save_data(s_file, accel):
     s_file.write(str(accel) + '\n')
 
 def run():
+    print("running...")
     now = str(datetime.now())
     save_file = open("data_mpu_" + now + ".txt", "x")
     size = 100
@@ -79,15 +80,17 @@ def run():
         y_vec[-1] = "%.1f" % data['z']
         line1 = live_plotter(x_vec,y_vec,line1, 0.015, identifier="Z accel")
         y_vec = np.append(y_vec[1:],0.0)
+    print("stopping...")
     save_file.close()
 
 def on_press(key):
     global is_running
+    print("press 'r' to run, 'n' to stop")
+    if key.char == 'r': 
+        run()
     if key.char == 'n': 
         is_running = False
 
 with keyboard.Listener(
         on_press=on_press) as listener:
     listener.join()
-
-run()
