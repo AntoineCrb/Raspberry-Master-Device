@@ -26,7 +26,6 @@ mpu = mpu6050(0x68)
 coord = ['x', 'y', 'z']
 offs = [0, 0, 0]
 speed = [0, 0, 0]
-is_running = True
 
 def init():
     print("--- initialisation")
@@ -63,13 +62,14 @@ def save_data(s_file, accel):
 def run():
     print("running...")
     now = str(datetime.now())
+    start = time.time()()
     save_file = open("data_mpu_" + now + ".txt", "x")
     size = 100
     x_vec = np.linspace(0,1,size+1)[0:-1]
     y_vec = np.zeros(len(x_vec))
     line1 = []
     init()
-    while is_running:
+    while time.time()() - start < 10:
         data = get_accel(3, 0.005)
         set_speed(data,0.03)
         s = ""
@@ -83,14 +83,4 @@ def run():
     print("stopping...")
     save_file.close()
 
-def on_press(key):
-    global is_running
-    print("press 'r' to run, 'n' to stop")
-    if key.char == 'r': 
-        run()
-    if key.char == 'n': 
-        is_running = False
-
-with keyboard.Listener(
-        on_press=on_press) as listener:
-    listener.join()
+run()
