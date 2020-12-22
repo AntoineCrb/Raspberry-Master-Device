@@ -54,22 +54,22 @@ def set_speed(current_acc, delta_time):
         speed[k] += current_acc[coord[k]]*delta_time
 
 def save_data(s_file, accel):
-    s_file.write('speed : ' )
-    s_file.write(str(speed))
     s_file.write('acc : ')
-    s_file.write(str(accel) + '\n')
+    s_file.write(str(accel))
+    s_file.write('speed : ' )
+    s_file.write(str(speed) + '\n')
 
 def run():
     print("running...")
     now = str(datetime.now())
-    start = time.time()()
     save_file = open("data_mpu_" + now + ".txt", "x")
     size = 100
     x_vec = np.linspace(0,1,size+1)[0:-1]
     y_vec = np.zeros(len(x_vec))
     line1 = []
     init()
-    while time.time()() - start < 10:
+    start = time.time()
+    while time.time() - start < 20:
         data = get_accel(3, 0.005)
         set_speed(data,0.03)
         s = ""
