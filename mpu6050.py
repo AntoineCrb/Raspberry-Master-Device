@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
+from datetime import datetime
 from mpu6050 import mpu6050
 import time
 
@@ -22,7 +23,8 @@ def live_plotter(x_vec,y1_data,line1,pause_time,identifier=''):
 
 mpu = mpu6050(0x68)
 coord = ['x', 'y', 'z']
-offs = [0]*3
+offs = [0, 0, 0]
+speed = [0, 0, 0]
 
 def init():
     print("--- initialisation")
@@ -46,7 +48,19 @@ def get_accel(n, t):
         time.sleep(t)
     return {'x':o['x']/n-offs[0], 'y':o['y']/n-offs[1], 'z':o['z']/n-offs[2]}
 
+def set_speed(current_acc, delta_time):
+    for k in range(len(coord)):
+        speed[k] += current_acc[coord[k]]*delta_time
+
+def save_data(s_file, accel):
+    s_file.write('speed : ' )
+    s_file.write(str(speed))
+    s_file.write('acc : ')
+    s_file.write(str(accel) + '\n')
+
 def run():
+    now = str(datetime.now())
+    save_file = open("data_mpu_" + now + ".txt", "x")
     size = 100
     x_vec = np.linspace(0,1,size+1)[0:-1]
     y_vec = np.zeros(len(x_vec))
@@ -54,9 +68,11 @@ def run():
     init()
     while True:
         data = get_accel(3, 0.005)
+        set_speed(data,0.03)
         s = ""
         for k in coord:
             s += k + ': ' +  ("" if data[k] < 0 else " ") + str("%.1f" % data[k]) + ' - '
+        save_data(save_file, s)
         print(s)
         y_vec[-1] = "%.1f" % data['z']
         line1 = live_plotter(x_vec,y_vec,line1, 0.015, identifier="Z accel")
