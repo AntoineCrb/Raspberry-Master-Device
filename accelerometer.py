@@ -3,84 +3,86 @@ import numpy as np
 from datetime import datetime
 from mpu6050 import mpu6050
 from pynput import keyboard
+import scipy.integrate as integrate
 import time
 
 plt.style.use('ggplot')
 
-def live_plotter(x_vec,y1_data,line1,pause_time,identifier=''):
-    if line1==[]:
-        plt.ion()
-        fig = plt.figure(figsize=(13,6))
-        ax = fig.add_subplot(111)
-        line1, = ax.plot(x_vec,y1_data,'-o',alpha=0.8)        
-        plt.ylabel('Y Label')
-        plt.title('Title: {}'.format(identifier))
-        plt.show()
-    line1.set_ydata(y1_data)
-    if np.min(y1_data)<=line1.axes.get_ylim()[0] or np.max(y1_data)>=line1.axes.get_ylim()[1]:
-        plt.ylim([np.min(y1_data)-np.std(y1_data),np.max(y1_data)+np.std(y1_data)])
-    plt.pause(pause_time)
-    return line1
+accel_X = []
+accel_Y = []
+accel_Z = []
+avg_x = 0
+avg_y = 0
+avg_z = 0
+accel_time = []
 
 mpu = mpu6050(0x68)
-coord = ['x', 'y', 'z']
-offs = [0, 0, 0]
-speed = [0, 0, 0]
 
 def init():
     print("--- initialisation")
     mpu.set_accel_range(mpu.ACCEL_RANGE_2G)
     mpu.set_gyro_range(mpu.GYRO_RANGE_250DEG)
-    reset_offset()
 
-def reset_offset():
-    global offs
-    print("--- offset loading...")
-    data = get_accel(100,0.01)
-    offs = [data[k] for k in coord]
-    print("--- offset calculated : " + str(offs))
+def get_accel():
+    ac_data = mpu.get_accel_data()
+    accel_time.append(time.time())
+    accel_X.append(ac_data['x'])
+    accel_Y.append(ac_data['y'])
+    accel_Z.append(ac_data['z'])
 
-def get_accel(n, t):
-    o = {'x':0,'y':0,'z':0}
-    for _ in range(n):
-        ac_data = mpu.get_accel_data()
-        for k in coord:
-            o[k] += ac_data[k]
-        time.sleep(t)
-    return {'x':o['x']/n-offs[0], 'y':o['y']/n-offs[1], 'z':o['z']/n-offs[2]}
+def update_time():
+    for k in range(1, len(accel_time)):
+        accel_time[k] -= accel_time[0]
 
-def set_speed(current_acc, delta_time):
-    for k in range(len(coord)):
-        speed[k] += current_acc[coord[k]]*delta_time
+def reset_offset_accel():
+    global avg_x, avg_y, avg_z, accel_X, accel_Y, accel_Z, accel_time
+    avg_x = np.mean(accel_X[5:])
+    avg_y = np.mean(accel_Y[5:])
+    avg_z = np.mean(accel_Z[5:])
+    accel_X = []
+    accel_Y = []
+    accel_Z = []
+    accel_time = []
 
-def save_data(s_file, accel):
-    s_file.write('acc : ')
-    s_file.write(str(accel))
-    s_file.write('speed : ' )
-    s_file.write(str(speed) + '\n')
+def update_accel():
+    for k in range(len(accel_X)):
+        accel_X[k] -= avg_x
+    for k in range(len(accel_Y)):
+        accel_Y[k] -= avg_y
+    for k in range(len(accel_Z)):
+        accel_Z[k] -= avg_z
 
 def run():
     print("running...")
-    now = str(datetime.now())
-    save_file = open("data_mpu_" + now + ".txt", "x")
-    size = 100
-    x_vec = np.linspace(0,1,size+1)[0:-1]
-    y_vec = np.zeros(len(x_vec))
-    line1 = []
     init()
+    print("start getting offset...")
     start = time.time()
-    while time.time() - start < 20:
-        data = get_accel(3, 0.005)
-        set_speed(data,0.03)
-        s = ""
-        for k in coord:
-            s += k + ': ' +  ("" if data[k] < 0 else " ") + str("%.1f" % data[k]) + ' - '
-        save_data(save_file, s)
-        print(s)
-        y_vec[-1] = "%.1f" % data['z']
-        line1 = live_plotter(x_vec,y_vec,line1, 0.015, identifier="Z accel")
-        y_vec = np.append(y_vec[1:],0.0)
-    print("stopping...")
-    save_file.close()
+    while time.time() - start < 5:
+        get_accel()
+    reset_offset_accel()
+    start = time.time()
+    print("start real measure...")
+    while time.time() - start < 10:
+        get_accel()
+    print("printing graph...")
+    update_time()
+    update_accel()
+    fig, axs = plt.subplots(3, 2)
+
+    axs[0, 0].plot(accel_time[5:], accel_X[5:])
+    axs[0, 0].set_title('accel X')
+    axs[0, 1].plot(accel_time[5:], integrate.cumtrapz(accel_X[5:], accel_time[5:], initial=0))
+    axs[0, 1].set_title('speed X')
+
+    axs[1, 0].plot(accel_time[5:], accel_Y[5:], 'tab:orange')
+    axs[1, 0].set_title('accel Y')
+    axs[1, 1].plot(accel_time[5:], integrate.cumtrapz(accel_Y[5:], accel_time[5:], initial=0), 'tab:orange')
+    axs[1, 1].set_title('speed Y')
+
+    axs[2, 0].plot(accel_time[5:], accel_Z[5:], 'tab:green')
+    axs[2, 0].set_title('accel Z')
+    axs[2, 1].plot(accel_time[5:], integrate.cumtrapz(accel_Z[5:], accel_time[5:], initial=0), 'tab:green')
+    axs[2, 1].set_title('speed Z')
+    plt.show()
 
 run()
